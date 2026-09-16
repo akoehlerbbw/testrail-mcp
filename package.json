@@ -1,7 +1,7 @@
 {
-  "name": "@bun913/mcp-testrail",
-  "author": "bun913",
-  "homepage": "https://github.com/bun913/mcp-testrail",
+  "name": "@akoehler2/bbw-testrail-mcp",
+  "author": "AKoehler2",
+  "homepage": "https://gitlab.com/AKoehler2/bbw-testrail-mcp",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -47,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bun913/mcp-testrail.git"
+    "url": "git+https://gitlab.com/AKoehler2/bbw-testrail-mcp.git"
   },
   "license": "MIT"
 }

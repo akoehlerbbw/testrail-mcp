@@ -5,6 +5,7 @@ import { TestRailRun } from "../../shared/schemas/runs.js";
 import { handleApiError } from "./utils.js";
 import {
 	GetPlansInputType,
+	GetPlanInputType,
 	AddPlanInputType,
 	AddPlanEntryInputType,
 	AddRunToPlanEntryInputType,
@@ -32,6 +33,22 @@ export class PlansClient extends BaseTestRailClient {
 				error,
 				`Failed to get test plans for project ${projectId}`,
 			);
+		}
+	}
+
+	/**
+	 * Gets one test plan, including its entries and child runs.
+	 * @param planId The TestRail plan ID
+	 * @returns The complete test plan
+	 */
+	async getPlan(planId: GetPlanInputType["planId"]): Promise<TestRailPlan> {
+		try {
+			const response: AxiosResponse<TestRailPlan> = await this.client.get(
+				`/api/v2/get_plan/${planId}`,
+			);
+			return response.data;
+		} catch (error) {
+			throw handleApiError(error, `Failed to get test plan ${planId}`);
 		}
 	}
 

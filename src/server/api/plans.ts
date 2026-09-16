@@ -3,6 +3,7 @@ import { TestRailClient } from "../../client/api/index.js";
 import { createSuccessResponse, createErrorResponse } from "./utils.js";
 import {
 	getPlansSchema,
+	getPlanSchema,
 	addPlanSchema,
 	addPlanEntrySchema,
 	addRunToPlanEntrySchema,
@@ -37,6 +38,34 @@ export function registerPlanTools(
 			} catch (error) {
 				const errorResponse = createErrorResponse(
 					`Error fetching test plans for project ${projectId}`,
+					error,
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(errorResponse) }],
+					isError: true,
+				};
+			}
+		},
+	);
+
+	// Get one test plan, including its entries and child runs
+	server.tool(
+		"getPlan",
+		"Retrieves a TestRail test plan with all entries and child runs",
+		getPlanSchema,
+		async ({ planId }) => {
+			try {
+				const plan = await testRailClient.plans.getPlan(planId);
+				const successResponse = createSuccessResponse(
+					"Test plan retrieved successfully",
+					{ plan },
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(successResponse) }],
+				};
+			} catch (error) {
+				const errorResponse = createErrorResponse(
+					`Error fetching test plan ${planId}`,
 					error,
 				);
 				return {

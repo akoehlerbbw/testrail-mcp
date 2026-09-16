@@ -17,7 +17,7 @@ The TestRail MCP server provides the following tools:
 | **Runs** | `getRuns`, `getRun`, `addRun`, `updateRun` |
 | **Tests** | `getTests`, `getTest` |
 | **Results** | `getResults`, `getResultsForCase`, `getResultsForRun`, `addResultForCase`, `addResultsForCases` |
-| **Plans** | `getPlans` |
+| **Plans** | `getPlans`, `getPlan`, `addPlan`, `addPlanEntry`, `addRunToPlanEntry` |
 | **Milestones** | `getMilestones` |
 | **Shared Steps** | `getSharedSteps` |
 
@@ -31,7 +31,7 @@ You can connect this MCP server by setting like the below. This method uses `npx
   "mcpServers": {
     "testrail": {
       "command": "npx",
-      "args": ["@bun913/mcp-testrail@latest"],
+      "args": ["-y", "@akoehler2/bbw-testrail-mcp@latest"],
       "env": {
         "TESTRAIL_URL": "https://your-instance.testrail.io", // Replace with your TestRail URL
         "TESTRAIL_USERNAME": "your-email@example.com", // Replace with your TestRail username
@@ -68,7 +68,7 @@ You can connect this MCP server by setting like the below. This method uses `npx
     "mcpServers": {
       "testrail": {
         "command": "/Users/you/.nvm/versions/node/v24.15.0/bin/npx",
-        "args": ["@bun913/mcp-testrail@latest"],
+        "args": ["-y", "@akoehler2/bbw-testrail-mcp@latest"],
         "env": {
           "TESTRAIL_URL": "https://your-instance.testrail.io",
           "TESTRAIL_USERNAME": "your-email@example.com",

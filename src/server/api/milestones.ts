@@ -1,7 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { TestRailClient } from "../../client/api/index.js";
 import { createSuccessResponse, createErrorResponse } from "./utils.js";
-import { getMilestonesSchema } from "../../shared/schemas/milestones.js";
+import {
+	addMilestoneSchema,
+	getMilestonesSchema,
+} from "../../shared/schemas/milestones.js";
 
 /**
  * Function to register milestone-related API tools
@@ -33,6 +36,45 @@ export function registerMilestoneTools(
 			} catch (error) {
 				const errorResponse = createErrorResponse(
 					`Error fetching milestones for project ${projectId}`,
+					error,
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(errorResponse) }],
+					isError: true,
+				};
+			}
+		},
+	);
+
+	server.tool(
+		"addMilestone",
+		"Creates a new milestone in a TestRail project / TestRailプロジェクトに新しいマイルストーンを作成します",
+		{
+			projectId: addMilestoneSchema.shape.projectId,
+			name: addMilestoneSchema.shape.name,
+			description: addMilestoneSchema.shape.description,
+			dueOn: addMilestoneSchema.shape.dueOn,
+			parentId: addMilestoneSchema.shape.parentId,
+			refs: addMilestoneSchema.shape.refs,
+			startOn: addMilestoneSchema.shape.startOn,
+		},
+		async (args) => {
+			const { projectId, ...data } = args;
+			try {
+				const milestone = await testRailClient.milestones.addMilestone(
+					projectId,
+					data,
+				);
+				const successResponse = createSuccessResponse(
+					"Milestone created successfully",
+					{ milestone },
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(successResponse) }],
+				};
+			} catch (error) {
+				const errorResponse = createErrorResponse(
+					`Error creating milestone in project ${projectId}`,
 					error,
 				);
 				return {

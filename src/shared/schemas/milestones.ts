@@ -5,11 +5,22 @@ export const getMilestonesSchema = {
 	projectId: z.number().describe("TestRail Project ID"),
 };
 
+export const addMilestoneSchema = z.object({
+	projectId: z.number().describe("TestRail Project ID"),
+	name: z.string().describe("Milestone name"),
+	description: z.string().optional().describe("Milestone description"),
+	dueOn: z.number().optional().describe("Due date as a Unix timestamp"),
+	parentId: z.number().optional().describe("Parent milestone ID"),
+	refs: z.string().optional().describe("Comma-separated references"),
+	startOn: z.number().optional().describe("Start date as a Unix timestamp"),
+});
+
 // Create Zod objects from each schema
 export const GetMilestonesInput = z.object(getMilestonesSchema);
 
 // Extract input types
 export type GetMilestonesInputType = z.infer<typeof GetMilestonesInput>;
+export type AddMilestoneInputType = z.infer<typeof addMilestoneSchema>;
 
 /**
  * TestRail API Response for Milestone

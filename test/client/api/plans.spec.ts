@@ -65,6 +65,28 @@ describe("PlansClient", () => {
 		await expect(client.getPlans(1)).rejects.toThrow(errorMessage);
 	});
 
+	it("should get one test plan with its entries and child runs", async () => {
+		const mockPlan = {
+			id: 1,
+			name: "Test Plan 1",
+			project_id: 1,
+			entries: [],
+		} as TestRailPlan;
+		mockAxios.get.mockResolvedValueOnce({ data: mockPlan });
+
+		const result = await client.getPlan(1);
+
+		expect(mockAxios.get).toHaveBeenCalledWith("/api/v2/get_plan/1");
+		expect(result).toEqual(mockPlan);
+	});
+
+	it("should handle errors when getting one test plan", async () => {
+		const errorMessage = "API Error";
+		mockAxios.get.mockRejectedValueOnce(new Error(errorMessage));
+
+		await expect(client.getPlan(1)).rejects.toThrow(errorMessage);
+	});
+
 	it("should create a new test plan with name only", async () => {
 		mockAxios.post.mockResolvedValueOnce({ data: {} });
 
