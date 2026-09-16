@@ -25,10 +25,6 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
-      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
-        with:
-          bot-id: "BT01KPGC0DQQM4GSQJXHGAJ7C87G"
-
       - name: Update package version
         run: npm version ${{ steps.semver.outputs.version }} --no-git-tag-version
 

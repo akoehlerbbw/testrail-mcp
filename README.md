@@ -21,9 +21,9 @@ The TestRail MCP server provides the following tools:
 | **Milestones** | `getMilestones` |
 | **Shared Steps** | `getSharedSteps` |
 
-## Usage
+## Local usage with `npx`
 
-You can connect this MCP server by setting like the below. This method uses `npx` to automatically download and run the latest version of the package, eliminating the need for local installation.
+After the package is published to npm, clients can download and run it without cloning this repository. Each user supplies their own TestRail credentials.
 
 ```json
 // Example configuration using npx
@@ -41,6 +41,52 @@ You can connect this MCP server by setting like the below. This method uses `npx
   }
 }
 ```
+
+Before the first release, create the `@akoehler2` npm scope/package if needed and configure npm trusted publishing for this GitHub repository with workflow filename `release.yml`. Then push a semantic version tag such as `v0.20.0`; the release workflow builds and publishes the matching public package version without storing an npm token in GitHub.
+
+For a one-time manual first publish, authenticate with `npm login`, run `npm publish --access public`, and then configure trusted publishing for later tagged releases. The package name must belong to an npm scope you control.
+
+## Remote HTTP deployment
+
+The HTTP transport is intended for a centrally hosted server. The deployment owns the TestRail credentials; clients only receive an MCP bearer token. Anyone with that token can perform the TestRail operations exposed by this server, so use a dedicated least-privilege TestRail account and rotate both credentials regularly.
+
+```bash
+docker build -t bbw-testrail-mcp .
+docker run --rm -p 3000:3000 \
+  -e TESTRAIL_URL=https://your-instance.testrail.io \
+  -e TESTRAIL_USERNAME=service-account@example.com \
+  -e TESTRAIL_API_KEY=your-api-key \
+  -e MCP_AUTH_TOKEN=replace-with-a-long-random-token \
+  bbw-testrail-mcp
+```
+
+Deploy this container behind HTTPS. The MCP endpoint is `/mcp`, and the unauthenticated health endpoint is `/health`. Set `MCP_ALLOWED_HOSTS` to a comma-separated list of public hostnames when you want explicit Host-header validation.
+
+VS Code workspace configuration:
+
+```json
+{
+  "servers": {
+    "testrail": {
+      "type": "http",
+      "url": "https://testrail-mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:testrail_mcp_token}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "testrail_mcp_token",
+      "type": "promptString",
+      "description": "TestRail MCP access token",
+      "password": true
+    }
+  ]
+}
+```
+
+For local HTTP development, copy `.env.example` to `.env`, fill in the secrets, then run `npm run build` and `npm run start:http`.
 
 ## Troubleshooting
 
