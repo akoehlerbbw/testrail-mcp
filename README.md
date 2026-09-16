@@ -1,7 +1,5 @@
 # TestRail MCP Server
 
-<a href="https://flatt.tech/oss/gmo/trampoline" target="_blank"><img src="https://flatt.tech/assets/images/badges/gmo-oss.svg" height="24px"/></a>
-
 This Model Context Protocol (MCP) server provides tools for interacting with TestRail directly from Claude AI and other MCP-supported clients like Cursor. It allows you to manage test cases, projects, suites, runs, and more without leaving your conversation with the AI.
 
 ## Available Tools
@@ -21,30 +19,79 @@ The TestRail MCP server provides the following tools:
 | **Milestones** | `getMilestones` |
 | **Shared Steps** | `getSharedSteps` |
 
-## Local usage with `npx`
+## Requirements
 
-After the package is published to npm, clients can download and run it without cloning this repository. Each user supplies their own TestRail credentials.
+- Node.js 20.18.1 or newer
+- Git
+- A TestRail account with API access
+
+## Use with VS Code
+
+Add the following to `.vscode/mcp.json`. `npx` downloads this repository, builds the package, and runs the MCP server locally. Each user supplies their own TestRail credentials.
 
 ```json
-// Example configuration using npx
+{
+  "servers": {
+    "testrail": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "--package=git+https://github.com/akoehlerbbw/testrail-mcp.git#main",
+        "mcp-testrail"
+      ],
+      "env": {
+        "TESTRAIL_URL": "https://your-instance.testrail.io",
+        "TESTRAIL_USERNAME": "${input:testrail_username}",
+        "TESTRAIL_API_KEY": "${input:testrail_api_key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "testrail_username",
+      "type": "promptString",
+      "description": "TestRail email address"
+    },
+    {
+      "id": "testrail_api_key",
+      "type": "promptString",
+      "description": "TestRail API key",
+      "password": true
+    }
+  ]
+}
+```
+
+Start the server from the MCP view in VS Code. The first start can take longer while `npx` downloads dependencies and builds the package.
+
+The `#main` reference follows the latest repository version. For repeatable installations, replace it with a release tag or commit SHA.
+
+## Other MCP clients
+
+Clients that use the `mcpServers` configuration format can use the same command and environment variables:
+
+```json
 {
   "mcpServers": {
     "testrail": {
       "command": "npx",
-      "args": ["-y", "@akoehler2/bbw-testrail-mcp@latest"],
+      "args": [
+        "-y",
+        "--package=git+https://github.com/akoehlerbbw/testrail-mcp.git#main",
+        "mcp-testrail"
+      ],
       "env": {
-        "TESTRAIL_URL": "https://your-instance.testrail.io", // Replace with your TestRail URL
-        "TESTRAIL_USERNAME": "your-email@example.com", // Replace with your TestRail username
-        "TESTRAIL_API_KEY": "YOUR_API_KEY" // Replace with your TestRail API key
+        "TESTRAIL_URL": "https://your-instance.testrail.io",
+        "TESTRAIL_USERNAME": "your-email@example.com",
+        "TESTRAIL_API_KEY": "your-api-key"
       }
     }
   }
 }
 ```
 
-Before the first release, create the `@akoehler2` npm scope/package if needed and configure npm trusted publishing for this GitHub repository with workflow filename `release.yml`. Then push a semantic version tag such as `v0.20.0`; the release workflow builds and publishes the matching public package version without storing an npm token in GitHub.
-
-For a one-time manual first publish, authenticate with `npm login`, run `npm publish --access public`, and then configure trusted publishing for later tagged releases. The package name must belong to an npm scope you control.
+Do not commit a configuration containing real credentials. Prefer your MCP client's secure input or secret-storage support.
 
 ## Troubleshooting
 
@@ -72,7 +119,11 @@ For a one-time manual first publish, authenticate with `npm login`, run `npm pub
     "mcpServers": {
       "testrail": {
         "command": "/Users/you/.nvm/versions/node/v24.15.0/bin/npx",
-        "args": ["-y", "@akoehler2/bbw-testrail-mcp@latest"],
+        "args": [
+          "-y",
+          "--package=git+https://github.com/akoehlerbbw/testrail-mcp.git#main",
+          "mcp-testrail"
+        ],
         "env": {
           "TESTRAIL_URL": "https://your-instance.testrail.io",
           "TESTRAIL_USERNAME": "your-email@example.com",
@@ -101,7 +152,9 @@ For a one-time manual first publish, authenticate with `npm login`, run `npm pub
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Open an issue before submitting a pull request, keep changes focused, and include tests for behavioral changes. Pull requests must pass the test and build workflow and require maintainer review before merge.
+
+Security vulnerabilities should be reported privately according to [SECURITY.md](SECURITY.md), not through a public issue.
 
 ## Acknowledgements
 
