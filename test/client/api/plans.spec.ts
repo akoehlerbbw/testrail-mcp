@@ -206,4 +206,18 @@ describe("PlansClient", () => {
 			},
 		);
 	});
+
+	it("should close an existing test plan", async () => {
+		const mockPlan = {
+			id: 1,
+			name: "Test Plan 1",
+			is_completed: true,
+		} as TestRailPlan;
+		mockAxios.post.mockResolvedValueOnce({ data: mockPlan });
+
+		const result = await client.closePlan(1);
+
+		expect(mockAxios.post).toHaveBeenCalledWith("/api/v2/close_plan/1", {});
+		expect(result).toEqual(mockPlan);
+	});
 });

@@ -4,6 +4,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils.js";
 import {
 	addMilestoneSchema,
 	getMilestonesSchema,
+	updateMilestoneSchema,
 } from "../../shared/schemas/milestones.js";
 
 /**
@@ -75,6 +76,48 @@ export function registerMilestoneTools(
 			} catch (error) {
 				const errorResponse = createErrorResponse(
 					`Error creating milestone in project ${projectId}`,
+					error,
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(errorResponse) }],
+					isError: true,
+				};
+			}
+		},
+	);
+
+	// Update an existing milestone (including closing/reopening it)
+	server.tool(
+		"updateMilestone",
+		"Updates an existing TestRail milestone, including marking it as completed/closed via isCompleted / 既存のTestRailマイルストーンを更新します（isCompletedで完了/クローズ設定が可能）",
+		{
+			milestoneId: updateMilestoneSchema.shape.milestoneId,
+			name: updateMilestoneSchema.shape.name,
+			description: updateMilestoneSchema.shape.description,
+			dueOn: updateMilestoneSchema.shape.dueOn,
+			parentId: updateMilestoneSchema.shape.parentId,
+			refs: updateMilestoneSchema.shape.refs,
+			startOn: updateMilestoneSchema.shape.startOn,
+			isCompleted: updateMilestoneSchema.shape.isCompleted,
+			isStarted: updateMilestoneSchema.shape.isStarted,
+		},
+		async (args) => {
+			const { milestoneId, ...data } = args;
+			try {
+				const milestone = await testRailClient.milestones.updateMilestone(
+					milestoneId,
+					data,
+				);
+				const successResponse = createSuccessResponse(
+					"Milestone updated successfully",
+					{ milestone },
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(successResponse) }],
+				};
+			} catch (error) {
+				const errorResponse = createErrorResponse(
+					`Error updating milestone ${milestoneId}`,
 					error,
 				);
 				return {

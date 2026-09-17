@@ -5,6 +5,7 @@ import { handleApiError } from "./utils.js";
 import {
 	AddMilestoneInputType,
 	GetMilestonesInputType,
+	UpdateMilestoneInputType,
 } from "../../shared/schemas/milestones.js";
 
 export class MilestonesClient extends BaseTestRailClient {
@@ -54,6 +55,31 @@ export class MilestonesClient extends BaseTestRailClient {
 				error,
 				`Failed to add milestone to project ${projectId}`,
 			);
+		}
+	}
+
+	async updateMilestone(
+		milestoneId: UpdateMilestoneInputType["milestoneId"],
+		data: Omit<UpdateMilestoneInputType, "milestoneId">,
+	): Promise<TestRailMilestone> {
+		try {
+			const payload: Record<string, unknown> = {};
+			if (data.name !== undefined) payload.name = data.name;
+			if (data.description !== undefined) payload.description = data.description;
+			if (data.dueOn !== undefined) payload.due_on = data.dueOn;
+			if (data.parentId !== undefined) payload.parent_id = data.parentId;
+			if (data.refs !== undefined) payload.refs = data.refs;
+			if (data.startOn !== undefined) payload.start_on = data.startOn;
+			if (data.isCompleted !== undefined) payload.is_completed = data.isCompleted;
+			if (data.isStarted !== undefined) payload.is_started = data.isStarted;
+
+			const response: AxiosResponse<TestRailMilestone> = await this.client.post(
+				`/api/v2/update_milestone/${milestoneId}`,
+				payload,
+			);
+			return response.data;
+		} catch (error) {
+			throw handleApiError(error, `Failed to update milestone ${milestoneId}`);
 		}
 	}
 }

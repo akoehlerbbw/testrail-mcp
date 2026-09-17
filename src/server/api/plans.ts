@@ -198,4 +198,32 @@ export function registerPlanTools(
 			}
 		},
 	);
+
+	// Close an existing test plan
+	server.tool(
+		"closePlan",
+		"Closes an existing test plan and archives its tests & results / 既存のテストプランをクローズし、テストと結果をアーカイブします",
+		getPlanSchema,
+		async ({ planId }) => {
+			try {
+				const plan = await testRailClient.plans.closePlan(planId);
+				const successResponse = createSuccessResponse(
+					"Test plan closed successfully",
+					{ plan },
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(successResponse) }],
+				};
+			} catch (error) {
+				const errorResponse = createErrorResponse(
+					`Error closing test plan ${planId}`,
+					error,
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(errorResponse) }],
+					isError: true,
+				};
+			}
+		},
+	);
 }

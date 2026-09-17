@@ -190,4 +190,34 @@ export function registerRunTools(
 			}
 		},
 	);
+
+	// Close an existing test run
+	server.tool(
+		"closeRun",
+		"Closes an existing test run and archives its tests & results / 既存のテスト実行をクローズし、テストと結果をアーカイブします",
+		getRunSchema,
+		async ({ runId }) => {
+			try {
+				const run = await testRailClient.runs.closeRun(runId);
+				const successResponse = createSuccessResponse(
+					"Test run closed successfully",
+					{
+						run,
+					},
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(successResponse) }],
+				};
+			} catch (error) {
+				const errorResponse = createErrorResponse(
+					`Error closing test run ${runId}`,
+					error,
+				);
+				return {
+					content: [{ type: "text", text: JSON.stringify(errorResponse) }],
+					isError: true,
+				};
+			}
+		},
+	);
 }

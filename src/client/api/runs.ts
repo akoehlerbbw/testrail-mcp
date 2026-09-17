@@ -116,4 +116,21 @@ export class RunsClient extends BaseTestRailClient {
 			throw handleApiError(error, `Failed to add result for test ${testId}`);
 		}
 	}
+
+	/**
+	 * Closes an existing test run and archives its tests & results
+	 * @param runId The ID of the test run
+	 * @returns Promise with the closed test run
+	 */
+	async closeRun(runId: GetRunInputType["runId"]): Promise<TestRailRun> {
+		try {
+			const response: AxiosResponse<TestRailRun> = await this.client.post(
+				`/api/v2/close_run/${runId}`,
+				{},
+			);
+			return response.data;
+		} catch (error) {
+			throw handleApiError(error, `Failed to close test run ${runId}`);
+		}
+	}
 }

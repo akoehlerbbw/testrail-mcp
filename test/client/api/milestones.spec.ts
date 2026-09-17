@@ -32,4 +32,19 @@ describe('Milestones API', () => {
     // Verify result
     expect(result).toEqual(mockMilestones);
   });
+
+  it('updates a milestone, including closing it', async () => {
+    // Mock response
+    const mockMilestone = { id: 1, name: 'Milestone 1', description: 'Description', is_completed: true, due_on: 1609459200, project_id: 1, url: 'http://example.com/milestone/1' };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockMilestone });
+
+    // Test method
+    const result = await client.milestones.updateMilestone(1, { isCompleted: true });
+
+    // Verify axios post was called correctly
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/v2/update_milestone/1', { is_completed: true });
+
+    // Verify result
+    expect(result).toEqual(mockMilestone);
+  });
 });

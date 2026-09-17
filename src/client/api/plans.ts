@@ -153,4 +153,21 @@ export class PlansClient extends BaseTestRailClient {
 			);
 		}
 	}
+
+	/**
+	 * Closes an existing test plan and archives its tests & results
+	 * @param planId The ID of the test plan
+	 * @returns Promise with the closed test plan
+	 */
+	async closePlan(planId: GetPlanInputType["planId"]): Promise<TestRailPlan> {
+		try {
+			const response: AxiosResponse<TestRailPlan> = await this.client.post(
+				`/api/v2/close_plan/${planId}`,
+				{},
+			);
+			return response.data;
+		} catch (error) {
+			throw handleApiError(error, `Failed to close test plan ${planId}`);
+		}
+	}
 }

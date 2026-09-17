@@ -172,5 +172,26 @@ describe('Runs API', () => {
     // Verify result
     expect(result).toEqual(mockRun);
   });
+
+  it('closes an existing run', async () => {
+    // Mock response
+    const mockRun = {
+      id: 1,
+      name: 'Test Run 1',
+      is_completed: true,
+      completed_on: 1619827200,
+      url: 'http://example.com/run/1'
+    };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockRun });
+
+    // Test method
+    const result = await client.runs.closeRun(1);
+
+    // Verify axios post was called correctly
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/v2/close_run/1', {});
+
+    // Verify result
+    expect(result).toEqual(mockRun);
+  });
   
 }); 
