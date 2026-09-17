@@ -35,8 +35,11 @@ export function registerTestTools(
 		},
 		async (args, extra) => {
 			try {
-				const { runId } = args;
-				const tests = await testRailClient.tests.getTests(runId);
+				const { runId, limit, offset } = args;
+				const tests = await testRailClient.tests.getTests(runId, {
+					limit,
+					offset,
+				});
 
 				// Return full case data for individual case requests
 				const successResponse = createSuccessResponse(
