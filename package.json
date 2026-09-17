@@ -30,7 +30,7 @@
     "@types/node": "^26.5.1",
     "@vitest/coverage-v8": "^4.1.8",
     "typescript": "~5.7.2",
-    "vitest": "^4.1.8"
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@biomejs/biome": "^1.9.4",
